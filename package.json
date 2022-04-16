@@ -23,7 +23,7 @@
     "build": "cross-env PUBLIC_URL='.' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "bump": "bump patch",
+    "bump": "bump",
     "prepublishOnly": "npm run build",
     "deploy:github": "rm -rf build && npm run bump && npm run build && git add . && git commit -m \"deploy\" && git push"
   },
