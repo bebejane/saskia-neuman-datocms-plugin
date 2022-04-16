@@ -43,6 +43,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
 
   const loadImageData = async () => {
     try{
+      console.log(ctx)
       console.log(ctx.currentUserAccessToken)
       const client = new SiteClient(ctx.currentUserAccessToken)
       const image = await client.uploads.find(uploadId)
