@@ -14,7 +14,7 @@ connect({
     return [
       {
         id: 'imageColorSelector',
-        name: 'Image Color Selector' + isDev ? ' (dev)' : '',
+        name: 'Image Color Selector' + (isDev ? ' (dev)' : ''),
         type: 'addon',
         fieldTypes: ['file'],
       },
