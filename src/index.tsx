@@ -21,4 +21,7 @@ connect({
   renderFieldExtension(fieldExtensionId: string, ctx: RenderFieldExtensionCtx) {
     return render(<ImageColorSelector ctx={ctx} />);
   },
+  async onBoot(ctx) {
+    console.log(`${require('../package.json').name} v${require('../package.json').version}`);
+  }
 });
