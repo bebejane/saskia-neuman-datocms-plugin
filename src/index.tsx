@@ -12,7 +12,7 @@ connect({
     return [
       {
         id: 'imageColorSelector',
-        name: 'Imafge Color Selector',
+        name: 'Image Color Selector',
         type: 'addon',
         fieldTypes: ['file'],
       },
