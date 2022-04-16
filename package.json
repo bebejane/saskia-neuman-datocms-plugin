@@ -25,7 +25,8 @@
     "eject": "react-scripts eject",
     "bump": "bump",
     "prepublishOnly": "npm run build",
-    "deploy:github": "rm -rf build && npm run bump && npm run build && git add . && git commit -m \"deploy\" && git push"
+    "deploy:github": "rm -rf build && npm run bump && npm run build && git add . && git commit -m \"deploy\" && git push",
+    "deploy:netlify": "npm run bump && git add . && git commit -m \"deploy\" && git push"
   },
   "eslintConfig": {
     "extends": [
