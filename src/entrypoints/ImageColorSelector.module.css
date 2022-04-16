@@ -1,19 +1,41 @@
 .container{
   display: flex;
   flex-direction: row;
+  min-height: 36px;
+  max-height: 36px;
+  width: 100%;
+}
+.palette{
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
+}
+.custom{
+  display: flex;
+  flex-direction: row;
 }
 .color{
-  height: 30px;
-  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
   border: 2px var(--border-color) solid;
-  margin-right: 5px;
-  cursor: pointer;
-  
+  margin-right: var(--spacing-s);
+  box-sizing: border-box;
+  padding:1px;
+  border-radius: 3px;
+}
+.colorBox{
+  height: 100%;
+  width: 100%;
 }
 .selected {
-  border: 2px #000 solid;
+  border: 2px #222 solid;
 }
 
 .hex{
   max-width: 70px;
+  border: 2px var(--border-color) solid;
+  margin-right: var(--spacing-s);
+  padding:10px;
 }

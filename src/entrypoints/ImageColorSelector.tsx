@@ -8,22 +8,20 @@ import rgbHex from 'rgb-hex';
 const { SiteClient } =  require('datocms-client')
 
 type PropTypes = { ctx: RenderFieldExtensionCtx };
-type Color = { red:number, green:number, blue:number }
+type Color = { red:number, green:number, blue:number, alpha:number }
 
 
 export default function ImageColorSelector({ ctx } : PropTypes) {
   
-  const id = ctx.item?.id as string
-  const itemType = ctx.itemType?.id
   const fieldKey = ctx.field.attributes.api_key;
   const formValues = ctx.formValues as any;
   const uploadId = formValues[fieldKey]?.upload_id
+  
   const [colors, setColors] = useState<[Color]>();
   const [loading, setLoading] = useState(true);
   const [hexColor, setHexColor] = useState<string>();
   const [selected, setSelected] = useState<Color>();
-  //const [uploadId, setUploadId] = useState<string>();
-  
+
   const saveColorSelection = async (color:Color) => {
     const customData = {selectedColor:`${color.red},${color.green},${color.blue}`}
     try{
@@ -42,26 +40,27 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
       console.log(err)
     }
   }
+
   const loadImageData = async () => {
     const client = new SiteClient(ctx.currentUserAccessToken)
-    //const record = (await client.items.all({itemType,filter:{ids:id}}))[0]
-    //console.log(record)
-    //if(!record || !record.image) return setLoading(false)
-
-    //const uploadId = record.image.uploadId;
     const image = await client.uploads.find(uploadId)
-    //console.log(image)
+    const selectedColor = image?.defaultFieldMetadata.en?.customData.selectedColor;
+    
+    if(selectedColor){
+      const rgb = selectedColor.split(',').map((c:string) => parseInt(c))
+      setSelected({red:rgb[0],green:rgb[1],blue:rgb[2],alpha:255})
+    }
     setColors(image?.colors)
-    //setUploadId(uploadId);
     setLoading(false)
   }
-  
-  useEffect(()=>{ 
-    if(uploadId) 
-      loadImageData()
-    else
-      setColors(undefined)
-  }, [uploadId])
+
+  const isSelected = (color:Color, color2?:Color) =>{  
+    if(!color || !color2) return false
+    return color.red === color2.red && color.green === color2.green && color.blue === color2.blue
+  }
+
+  useEffect(()=>{ uploadId ? loadImageData() : setColors(undefined)}, [uploadId])
+  useEffect(()=>{ if(selected) setHexColor(`#${rgbHex(selected.red, selected.green, selected.blue)}`)}, [selected])
   useEffect(()=>{ 
     if(!hexColor) return
     try{
@@ -71,11 +70,6 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
       console.log('not a valid color', hexColor)
     }
   }, [hexColor])
-
-  useEffect(()=>{ 
-    if(selected) 
-      setHexColor(`#${rgbHex(selected.red, selected.green, selected.blue)}`)
-  }, [selected])
   
   return (
     <Canvas ctx={ctx}>
@@ -84,20 +78,37 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
         {colors &&
           <>
             <div className={styles.container}>
-              {colors.map((color, idx) => 
-                <div 
-                  className={`${styles.color} ${JSON.stringify(color) === JSON.stringify(selected) && styles.selected}`} 
-                  style={{backgroundColor:`rgb(${color.red},${color.green},${color.blue})`}}
-                  onClick={()=>setSelected(color)}
-                ></div>
-              )}
-              <input 
-                id={'hexcolor'} 
-                value={hexColor}
-                placeholder="#hex"
-                className={styles.hex} 
-                onChange={(e)=> setHexColor(e.target.value)} type="text" 
-              />
+              <div className={styles.palette}>
+                {colors.map((color, idx) => 
+                  <div 
+                    key={idx}
+                    className={`${styles.color} ${isSelected(color, selected) && styles.selected}`} 
+                    onClick={()=>setSelected(color)}
+                  >
+                    <div 
+                      className={styles.colorBox} 
+                      style={{backgroundColor:`rgba(${color.red},${color.green},${color.blue},${color.alpha})`}}
+                    ></div>
+                  </div>
+                )}
+              </div>
+              <div className={styles.custom}>
+                <input 
+                  id={'hexcolor'} 
+                  className={styles.hex} 
+                  value={hexColor}
+                  maxLength={7}
+                  placeholder="#ccaabb"
+                  onKeyDown={()=>setSelected(undefined)}
+                  onChange={(e)=> setHexColor(e.target.value)} type="text" 
+                />
+                <div className={`${styles.color} ${!selected && styles.selected}`}>
+                  <div 
+                    className={styles.colorBox} 
+                    style={!selected ? {backgroundColor:hexColor} : {}}
+                  ></div>
+                </div>
+              </div>
             </div>
           </>
         }
