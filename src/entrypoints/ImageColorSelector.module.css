@@ -1,0 +1,19 @@
+.container{
+  display: flex;
+  flex-direction: row;
+}
+.color{
+  height: 30px;
+  width: 40px;
+  border: 2px var(--border-color) solid;
+  margin-right: 5px;
+  cursor: pointer;
+  
+}
+.selected {
+  border: 2px #000 solid;
+}
+
+.hex{
+  max-width: 70px;
+}
