@@ -65,6 +65,23 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
     return color.red === color2.red && color.green === color2.green && color.blue === color2.blue
   }
 
+  const handleColorPickerModal = async () => {
+
+    const result = await ctx.openModal({
+      id: 'colorPickerModal',
+      width: 's',
+      closeDisabled: false,
+      title:'Custom color',
+      parameters: { hex:hexColor },
+    });
+
+    if(!result) return
+
+    setSelected(undefined)
+    setHexColor(result as string)
+
+  };
+
   useEffect(()=>{ uploadId ? loadImageData() : setColors(undefined)}, [uploadId])
   useEffect(()=>{ if(selected) setHexColor(`#${rgbHex(selected.red, selected.green, selected.blue)}`)}, [selected])
   useEffect(()=>{ 
@@ -111,7 +128,8 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
                 <div className={`${styles.color} ${!selected && styles.selected}`}>
                   <div 
                     className={styles.colorBox} 
-                    style={!selected ? {backgroundColor:hexColor} : {}}
+                    style={{backgroundColor:hexColor}}
+                    onClick={handleColorPickerModal}
                   ></div>
                 </div>
               </div>

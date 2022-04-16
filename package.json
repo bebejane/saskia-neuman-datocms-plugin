@@ -1,6 +1,6 @@
 {
   "name": "datocms-image-color-selector",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": true,
   "dependencies": {
     "@types/node": "^16.11.27",
@@ -13,6 +13,7 @@
     "hex-rgb": "^5.0.0",
     "react": "^18.0.0",
     "react-color": "^2.19.3",
+    "react-colorful": "^5.5.1",
     "react-dom": "^18.0.0",
     "react-scripts": "5.0.1",
     "rgb-hex": "^4.0.0",

@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.container  > div > div{
+  width: 100%;
+  
+}
+.picker{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-bottom: var(--spacing-m);
+}
+.buttons{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: flex-end;
+}
+.buttons > button{
+  margin-left: var(--spacing-m);
+}
+.box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  border-radius: 10px;
+  border: 2px var(--border-color) solid;
+  margin-left: 20px;
+  text-transform: uppercase;
+  color: #fff;
+}
