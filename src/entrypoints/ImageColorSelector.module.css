@@ -31,6 +31,9 @@
 .colorBox{
   height: 100%;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .selected {
   border: 2px #222 solid;
@@ -41,4 +44,7 @@
   border: 2px var(--border-color) solid;
   margin-right: var(--spacing-s);
   padding:10px;
+}
+.error{
+  color: var(--alert-color);
 }

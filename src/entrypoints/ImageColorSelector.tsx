@@ -10,7 +10,6 @@ const { SiteClient } =  require('datocms-client')
 type PropTypes = { ctx: RenderFieldExtensionCtx };
 type Color = { red:number, green:number, blue:number, alpha:number }
 
-
 export default function ImageColorSelector({ ctx } : PropTypes) {
   
   const fieldKey = ctx.field.attributes.api_key;
@@ -19,13 +18,17 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
   
   const [colors, setColors] = useState<[Color]>();
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
   const [hexColor, setHexColor] = useState<string>();
   const [selected, setSelected] = useState<Color>();
+  
 
   const saveColorSelection = async (color:Color) => {
+    const client = new SiteClient(ctx.currentUserAccessToken)
     const customData = {selectedColor:`${color.red},${color.green},${color.blue}`}
-    try{
-      const client = new SiteClient(ctx.currentUserAccessToken)
+    setSaving(true)
+    try{  
       await client.uploads.update(uploadId, {
         defaultFieldMetadata: {
           en: {
@@ -36,9 +39,10 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
         },
       })
       console.log('saved color', customData)
-    }catch(err){
-      console.log(err)
+    }catch(err : any){
+      setError(err.message)
     }
+    setSaving(false)
   }
 
   const loadImageData = async () => {
@@ -54,8 +58,8 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
         setSelected({red:rgb[0],green:rgb[1],blue:rgb[2],alpha:255})
       }
       setColors(image?.colors)
-    }catch(err){
-      console.log(err)
+    }catch(err : any){
+      setError(err.message)
     }
     setLoading(false)
   }
@@ -79,7 +83,6 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
 
     setSelected(undefined)
     setHexColor(result as string)
-
   };
 
   useEffect(()=>{ uploadId ? loadImageData() : setColors(undefined)}, [uploadId])
@@ -128,12 +131,15 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
                 <div className={`${styles.color} ${!selected && styles.selected}`}>
                   <div 
                     className={styles.colorBox} 
-                    style={{backgroundColor:hexColor}}
+                    style={saving ? {} : {backgroundColor:hexColor}}
                     onClick={handleColorPickerModal}
-                  ></div>
+                  >
+                    {saving && <Spinner size={20}/>}
+                  </div>
                 </div>
               </div>
             </div>
+            <div className={styles.error}>{error}</div>
           </>
         }
       </main>
