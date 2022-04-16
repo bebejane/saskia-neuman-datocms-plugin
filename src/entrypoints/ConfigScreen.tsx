@@ -8,7 +8,7 @@ type Props = {
 export default function ConfigScreen({ ctx }: Props) {
   return (
     <Canvas ctx={ctx}>
-      <p>Image Color Selector {`v${require('../../package.json').version}`}</p>
+      Image Color Selector {`v${require('../../package.json').version}`}
     </Canvas>
   );
 }

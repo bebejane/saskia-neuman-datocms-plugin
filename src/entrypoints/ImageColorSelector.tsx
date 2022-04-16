@@ -22,18 +22,17 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
   const [error, setError] = useState('');
   const [hexColor, setHexColor] = useState<string>();
   const [selected, setSelected] = useState<Color>();
-  
 
   const saveColorSelection = async (color:Color) => {
     const client = new SiteClient(ctx.currentUserAccessToken)
-    const customData = {selectedColor:`${color.red},${color.green},${color.blue}`}
+    const customData = {color:`${color.red},${color.green},${color.blue}`}
     setSaving(true)
     try{  
       await client.uploads.update(uploadId, {
         defaultFieldMetadata: {
           en: {
-            alt:'',
-            title:'',
+            alt:undefined,
+            title:undefined,
             customData
           },
         },
