@@ -50,7 +50,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
     
       const client = new SiteClient(ctx.currentUserAccessToken)
       const image = await client.uploads.find(uploadId)
-      const selectedColor = image?.defaultFieldMetadata.en?.customData.selectedColor;
+      const selectedColor = image?.defaultFieldMetadata.en?.customData.color;
     
       if(selectedColor){
         const rgb = selectedColor.split(',').map((c:string) => parseInt(c))
