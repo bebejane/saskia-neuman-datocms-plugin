@@ -42,15 +42,19 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
   }
 
   const loadImageData = async () => {
-    const client = new SiteClient(ctx.currentUserAccessToken)
-    const image = await client.uploads.find(uploadId)
-    const selectedColor = image?.defaultFieldMetadata.en?.customData.selectedColor;
+    try{
+      const client = new SiteClient(ctx.currentUserAccessToken)
+      const image = await client.uploads.find(uploadId)
+      const selectedColor = image?.defaultFieldMetadata.en?.customData.selectedColor;
     
-    if(selectedColor){
-      const rgb = selectedColor.split(',').map((c:string) => parseInt(c))
-      setSelected({red:rgb[0],green:rgb[1],blue:rgb[2],alpha:255})
+      if(selectedColor){
+        const rgb = selectedColor.split(',').map((c:string) => parseInt(c))
+        setSelected({red:rgb[0],green:rgb[1],blue:rgb[2],alpha:255})
+      }
+      setColors(image?.colors)
+    }catch(err){
+      console.log(err)
     }
-    setColors(image?.colors)
     setLoading(false)
   }
 
