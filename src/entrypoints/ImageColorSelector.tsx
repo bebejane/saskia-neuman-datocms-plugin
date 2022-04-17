@@ -1,7 +1,7 @@
 import styles from './ImageColorSelector.module.css'
 import { useEffect, useState } from 'react'
 import { RenderFieldExtensionCtx } from 'datocms-plugin-sdk';
-import { Canvas, Spinner, TextField } from 'datocms-react-ui';
+import { Canvas, Spinner } from 'datocms-react-ui';
 import hexRgb from 'hex-rgb';
 import rgbHex from 'rgb-hex';
 
@@ -47,7 +47,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
   const loadImageData = async () => {
 
     try{
-    
+      setHexColor(undefined)
       const client = new SiteClient(ctx.currentUserAccessToken)
       const image = await client.uploads.find(uploadId)
       const selectedColor = image?.defaultFieldMetadata.en?.customData.color;
@@ -99,7 +99,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
   return (
     <Canvas ctx={ctx}>
       <main>
-        {loading && <Spinner size={14}/>}
+        {loading && <Spinner size={20}/>}
         {colors &&
           <>
             <div className={styles.container}>
@@ -120,12 +120,13 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
               <div className={styles.custom}>
                 <input 
                   id={'hexcolor'} 
+                  type="text" 
                   className={styles.hex} 
                   value={hexColor}
                   maxLength={7}
                   placeholder="#ccaabb"
                   onKeyDown={()=>setSelected(undefined)}
-                  onChange={(e)=> setHexColor(e.target.value)} type="text" 
+                  onChange={(e)=> setHexColor(e.target.value)}
                 />
                 <div className={`${styles.color} ${!selected && styles.selected}`}>
                   <div 
