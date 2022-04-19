@@ -103,6 +103,27 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
         {colors &&
           <>
             <div className={styles.container}>
+            <div className={styles.custom}>
+              <div className={`${styles.color} ${!selected && styles.selected}`}>
+                <div 
+                  className={styles.colorBox} 
+                  style={saving ? {} : {backgroundColor:hexColor}}
+                  onClick={handleColorPickerModal}
+                >
+                  {saving && <Spinner size={20}/>}
+                </div>
+              </div>
+              <input 
+                id={'hexcolor'} 
+                type="text" 
+                className={styles.hex} 
+                value={hexColor}
+                maxLength={7}
+                placeholder="#ccaabb"
+                onKeyDown={()=>setSelected(undefined)}
+                onChange={(e)=> setHexColor(e.target.value)}
+              />              
+              </div>
               <div className={styles.palette}>
                 {colors.map((color, idx) => 
                   <div 
@@ -117,27 +138,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
                   </div>
                 )}
               </div>
-              <div className={styles.custom}>
-                <input 
-                  id={'hexcolor'} 
-                  type="text" 
-                  className={styles.hex} 
-                  value={hexColor}
-                  maxLength={7}
-                  placeholder="#ccaabb"
-                  onKeyDown={()=>setSelected(undefined)}
-                  onChange={(e)=> setHexColor(e.target.value)}
-                />
-                <div className={`${styles.color} ${!selected && styles.selected}`}>
-                  <div 
-                    className={styles.colorBox} 
-                    style={saving ? {} : {backgroundColor:hexColor}}
-                    onClick={handleColorPickerModal}
-                  >
-                    {saving && <Spinner size={20}/>}
-                  </div>
-                </div>
-              </div>
+              
             </div>
             <div className={styles.error}>{error}</div>
           </>

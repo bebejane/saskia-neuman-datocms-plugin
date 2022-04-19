@@ -23,7 +23,7 @@ export default function ColorPickerModal({ ctx } : PropTypes) {
           </div>
         </div>
         <div className={styles.buttons}>
-          <Button disabled={!hasChanged} buttonSize="m" onClick={()=> ctx.resolve(color)}>Save</Button> 
+          <Button disabled={!hasChanged} fullWidth onClick={()=> ctx.resolve(color)}>Save</Button> 
         </div>
       </main>
     </Canvas>

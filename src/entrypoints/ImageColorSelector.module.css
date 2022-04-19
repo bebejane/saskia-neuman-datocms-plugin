@@ -1,13 +1,14 @@
 .container{
   display: flex;
   flex-direction: row;
-  min-height: 36px;
-  max-height: 36px;
+  flex-wrap: wrap;
   width: 100%;
+  height: auto;
 }
 .palette{
   display: flex;
   flex-direction: row;
+  justify-content: flex-end;
   flex: 1 1 auto;
 }
 .custom{
