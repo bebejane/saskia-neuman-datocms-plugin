@@ -1,6 +1,6 @@
 {
   "name": "datocms-image-color-selector",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "private": true,
   "dependencies": {
     "@types/node": "^16.11.27",

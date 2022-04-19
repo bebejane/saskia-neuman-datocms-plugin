@@ -18,9 +18,6 @@
   width: 100%;
   justify-content: flex-end;
 }
-.buttons > button{
-  margin-left: var(--spacing-m);
-}
 .box{
   display: flex;
   align-items: center;
