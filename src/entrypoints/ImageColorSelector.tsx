@@ -17,7 +17,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
   const uploadId = formValues[fieldKey]?.upload_id
   
   const [colors, setColors] = useState<[Color]>();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [hexColor, setHexColor] = useState<string>();
@@ -45,7 +45,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
   }
 
   const loadImageData = async () => {
-
+    setLoading(true)
     try{
       setHexColor(undefined)
       const client = new SiteClient(ctx.currentUserAccessToken)
