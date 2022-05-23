@@ -1,7 +1,7 @@
 import styles from './ImageColorSelector.module.css'
 import { useEffect, useState } from 'react'
 import { RenderFieldExtensionCtx } from 'datocms-plugin-sdk';
-import { Canvas, Spinner } from 'datocms-react-ui';
+import { Canvas, Spinner, SwitchField } from 'datocms-react-ui';
 import hexRgb from 'hex-rgb';
 import rgbHex from 'rgb-hex';
 
@@ -17,17 +17,18 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
   const uploadId = formValues[fieldKey]?.upload_id
   
   const [colors, setColors] = useState<[Color]>();
+  const [theme, setTheme] = useState<String>('light');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [hexColor, setHexColor] = useState<string>();
   const [selected, setSelected] = useState<Color>();
 
-  const saveColorSelection = async (color:Color) => {
+  const saveCustomData = async (color:Color, theme:String) => {
     const client = new SiteClient(ctx.currentUserAccessToken)
-    const customData = {color:`${color.red},${color.green},${color.blue}`}
     setSaving(true)
     try{  
+      const customData = { color: `${color.red},${color.green},${color.blue}`, theme};
       await client.uploads.update(uploadId, {
         defaultFieldMetadata: {
           en: {
@@ -37,11 +38,29 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
           },
         },
       })
-      console.log('saved color', customData)
     }catch(err : any){
       setError(err.message)
     }
     setSaving(false)
+  }
+
+  
+  const saveTheme = async (theme:String) => {
+    const client = new SiteClient(ctx.currentUserAccessToken)
+    console.log('save theme')
+    try{  
+      await client.uploads.update(uploadId, {
+        defaultFieldMetadata: {
+          en: {
+            alt:undefined,
+            title:undefined,
+            customData:{ theme }
+          },
+        },
+      })
+    }catch(err : any){
+      setError(err.message)
+    }
   }
 
   const loadImageData = async () => {
@@ -90,11 +109,13 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
     if(!hexColor) return
     try{
       const color = hexRgb(hexColor);
-      saveColorSelection(color);
+      saveCustomData(color, theme);
     }catch(err){
       console.log('not a valid color', hexColor)
     }
-  }, [hexColor])
+  }, [hexColor, theme])
+  
+  
   
   return (
     <Canvas ctx={ctx}>
@@ -103,42 +124,50 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
         {colors &&
           <>
             <div className={styles.container}>
-            <div className={styles.custom}>
-              <div className={`${styles.color} ${!selected && styles.selected}`}>
-                <div 
-                  className={styles.colorBox} 
-                  style={saving ? {} : {backgroundColor:hexColor}}
-                  onClick={handleColorPickerModal}
-                >
-                  {saving && <Spinner size={20}/>}
+              <div className={styles.theme}>
+                <SwitchField 
+                  id="theme"
+                  name="theme"
+                  label="Dark"
+                  value={theme !== 'light'}
+                  onChange={()=> setTheme(theme === 'light' ? 'dark' : 'light')}
+                />
+              </div>
+              <div className={styles.custom}>
+                <div className={styles.palette}>
+                  {colors.map((color, idx) => 
+                    <div 
+                      key={idx}
+                      className={`${styles.color} ${isSelected(color, selected) && styles.selected}`} 
+                      onClick={()=>setSelected(color)}
+                    >
+                      <div 
+                        className={styles.colorBox} 
+                        style={{backgroundColor:`rgba(${color.red},${color.green},${color.blue},${color.alpha})`}}
+                      ></div>
+                    </div>
+                  )}
+                </div>
+                <input 
+                  id={'hexcolor'} 
+                  type="text" 
+                  className={styles.hex} 
+                  value={hexColor}
+                  maxLength={7}
+                  placeholder="#ccaabb"
+                  onKeyDown={()=>setSelected(undefined)}
+                  onChange={(e)=> setHexColor(e.target.value)}
+                />
+                <div className={`${styles.color} ${!selected && styles.selected}`}>
+                  <div 
+                    className={styles.colorBox} 
+                    style={saving ? {} : {backgroundColor:hexColor}}
+                    onClick={handleColorPickerModal}
+                  >
+                    {saving && <Spinner size={20}/>}
+                  </div>
                 </div>
               </div>
-              <input 
-                id={'hexcolor'} 
-                type="text" 
-                className={styles.hex} 
-                value={hexColor}
-                maxLength={7}
-                placeholder="#ccaabb"
-                onKeyDown={()=>setSelected(undefined)}
-                onChange={(e)=> setHexColor(e.target.value)}
-              />              
-              </div>
-              <div className={styles.palette}>
-                {colors.map((color, idx) => 
-                  <div 
-                    key={idx}
-                    className={`${styles.color} ${isSelected(color, selected) && styles.selected}`} 
-                    onClick={()=>setSelected(color)}
-                  >
-                    <div 
-                      className={styles.colorBox} 
-                      style={{backgroundColor:`rgba(${color.red},${color.green},${color.blue},${color.alpha})`}}
-                    ></div>
-                  </div>
-                )}
-              </div>
-              
             </div>
             <div className={styles.error}>{error}</div>
           </>

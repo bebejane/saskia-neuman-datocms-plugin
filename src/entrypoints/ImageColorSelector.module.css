@@ -2,8 +2,12 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  align-items: center;
   width: 100%;
   height: auto;
+}
+.theme{
+  flex: 1 1 auto;
 }
 .palette{
   display: flex;
@@ -37,13 +41,14 @@
   justify-content: center;
 }
 .selected {
-  border: 2px #222 solid;
+  border: 2px var(--darker-border-color) solid;
 }
 
 .hex{
   max-width: 70px;
   border: 2px var(--border-color) solid;
   margin-right: var(--spacing-s);
+  margin-left: var(--spacing-s);
   padding:10px;
 }
 .error{
