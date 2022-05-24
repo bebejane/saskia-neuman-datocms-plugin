@@ -63,18 +63,22 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
     }
   }
 
-  const loadImageData = async () => {
+  const loadData = async () => {
     setLoading(true)
     try{
       setHexColor(undefined)
       const client = new SiteClient(ctx.currentUserAccessToken)
       const image = await client.uploads.find(uploadId)
       const selectedColor = image?.defaultFieldMetadata.en?.customData.color;
+      const selectedTheme = image?.defaultFieldMetadata.en?.customData.theme;
     
       if(selectedColor){
         const rgb = selectedColor.split(',').map((c:string) => parseInt(c))
         setSelected({red:rgb[0],green:rgb[1],blue:rgb[2],alpha:255})
       }
+      if(selectedTheme)
+        setTheme(selectedTheme)
+      
       setColors(image?.colors)
     }catch(err : any){
       setError(err.message)
@@ -103,7 +107,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
     setHexColor(result as string)
   };
 
-  useEffect(()=>{ uploadId ? loadImageData() : setColors(undefined)}, [uploadId])
+  useEffect(()=>{ uploadId ? loadData() : setColors(undefined)}, [uploadId])
   useEffect(()=>{ if(selected) setHexColor(`#${rgbHex(selected.red, selected.green, selected.blue)}`)}, [selected])
   useEffect(()=>{ 
     if(!hexColor) return
@@ -114,8 +118,6 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
       console.log('not a valid color', hexColor)
     }
   }, [hexColor, theme])
-  
-  
   
   return (
     <Canvas ctx={ctx}>
