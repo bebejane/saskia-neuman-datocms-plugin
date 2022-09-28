@@ -25,13 +25,16 @@
   justify-content: center;
   width: 36px;
   border: 1px var(--border-color) solid;
-  margin-right: var(--spacing-s);
+  margin-right: 2px;
   box-sizing: border-box;
-  padding:1px;
+  padding:0px;
   border-radius: 3px;
 }
 .color:last-child{
   margin-right: 0;
+}
+.color:hover:not(.selected){
+  border: 2px var(--darker-border-color) solid;
 }
 .colorBox{
   height: 100%;
@@ -39,9 +42,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 .selected {
-  border: 2px var(--darker-border-color) solid;
+  border: 2px #000 solid;
 }
 
 .hex{

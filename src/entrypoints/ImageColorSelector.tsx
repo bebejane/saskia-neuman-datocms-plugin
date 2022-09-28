@@ -130,7 +130,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
                 <SwitchField 
                   id="theme"
                   name="theme"
-                  label="Dark"
+                  label="White menu"
                   value={theme !== 'light'}
                   onChange={()=> setTheme(theme === 'light' ? 'dark' : 'light')}
                 />
@@ -165,6 +165,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
                     className={styles.colorBox} 
                     style={saving ? {} : {backgroundColor:hexColor}}
                     onClick={handleColorPickerModal}
+                    title="Select color"
                   >
                     {saving && <Spinner size={20}/>}
                   </div>
