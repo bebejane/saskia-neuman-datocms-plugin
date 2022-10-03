@@ -91,6 +91,17 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
     return color.red === color2.red && color.green === color2.green && color.blue === color2.blue
   }
 
+  const isCustomColor = (color:Color | undefined) : boolean => {
+    if(typeof colors === 'undefined' || typeof color === 'undefined') 
+      return false
+
+    for (let i = 0; i < colors.length; i++) {
+      if(JSON.stringify(colors[i]) === JSON.stringify(color))
+        return false;
+    }
+    return true
+  }
+
   const handleColorPickerModal = async () => {
 
     const result = await ctx.openModal({
@@ -144,7 +155,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
                       onClick={()=>setSelected(color)}
                     >
                       <div 
-                        className={styles.colorBox} 
+                        className={`${styles.colorBox} ${isCustomColor(selected) && styles.selected}`} 
                         style={{backgroundColor:`rgba(${color.red},${color.green},${color.blue},${color.alpha})`}}
                       ></div>
                     </div>
