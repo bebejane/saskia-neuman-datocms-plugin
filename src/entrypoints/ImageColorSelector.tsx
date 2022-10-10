@@ -94,7 +94,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
   const isCustomColor = (color:Color | undefined) : boolean => {
     if(typeof colors === 'undefined' || typeof color === 'undefined') 
       return false
-
+    
     for (let i = 0; i < colors.length; i++) {
       if(JSON.stringify(colors[i]) === JSON.stringify(color))
         return false;
@@ -114,7 +114,7 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
 
     if(!result) return
 
-    setSelected(undefined)
+    setSelected(hexRgb(result as string))
     setHexColor(result as string)
   };
 
@@ -151,11 +151,11 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
                   {colors.map((color, idx) => 
                     <div 
                       key={idx}
-                      className={`${styles.color} ${isSelected(color, selected) && styles.selected}`} 
+                      className={`${styles.color}`} 
                       onClick={()=>setSelected(color)}
                     >
                       <div 
-                        className={`${styles.colorBox} ${isCustomColor(selected) && styles.selected}`} 
+                        className={`${styles.colorBox} ${isSelected(color, selected) && styles.selected}`} 
                         style={{backgroundColor:`rgba(${color.red},${color.green},${color.blue},${color.alpha})`}}
                       ></div>
                     </div>
@@ -171,9 +171,9 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
                   onKeyDown={()=>setSelected(undefined)}
                   onChange={(e)=> setHexColor(e.target.value)}
                 />
-                <div className={`${styles.color} ${!selected && styles.selected}`}>
+                <div className={styles.color}>
                   <div 
-                    className={styles.colorBox} 
+                    className={`${styles.colorBox} ${(hexColor && isCustomColor(selected)) ? styles.selected : ''}`} 
                     style={saving ? {} : {backgroundColor:hexColor}}
                     onClick={handleColorPickerModal}
                     title="Select color"
