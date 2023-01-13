@@ -29,6 +29,7 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
     setSaving(true)
     try {
       const customData = { theme, color: color ? `${color.red},${color.green},${color.blue}` : undefined };
+      console.log(customData, uploadId);
 
       await client.uploads.update(uploadId, {
         defaultFieldMetadata: {
@@ -43,6 +44,7 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
       setError(err.message)
     }
     setSaving(false)
+
   }, [uploadId, ctx.currentUserAccessToken])
 
 
@@ -134,7 +136,7 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
     }
   }, [hexColor, theme, saveCustomData])
 
-  console.log('new ver');
+  console.log('new ver', error);
 
   return (
     <Canvas ctx={ctx}>
