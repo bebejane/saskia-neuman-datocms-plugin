@@ -14,6 +14,10 @@
   flex: 1 1 auto;
 }
 
+.theme>div {
+  margin-right: 1rem;
+}
+
 .palette {
   display: flex;
   flex-direction: row;

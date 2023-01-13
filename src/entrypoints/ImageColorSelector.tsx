@@ -129,7 +129,7 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
                     setTheme(theme === 'light' ? 'dark' : 'light')
                   }}
                 />
-                {saving && <Spinner style={{ marginLeft: '1rem' }} size={20} />}
+                {saving && <Spinner size={20} />}
               </div>
               <div className={styles.custom}>
                 <div className={styles.palette}>
