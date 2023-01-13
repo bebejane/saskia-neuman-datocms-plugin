@@ -10,6 +10,7 @@
 .theme {
   display: flex;
   flex-direction: row;
+  align-items: center;
   flex: 1 1 auto;
   margin-right: 1rem;
 }
