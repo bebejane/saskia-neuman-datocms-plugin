@@ -128,9 +128,8 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
                     console.log('set theme')
                     setTheme(theme === 'light' ? 'dark' : 'light')
                   }}
-
-
                 />
+                {saving && <Spinner size={20} />}
               </div>
               <div className={styles.custom}>
                 <div className={styles.palette}>
