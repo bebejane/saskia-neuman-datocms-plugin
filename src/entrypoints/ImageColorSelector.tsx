@@ -20,7 +20,7 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
   const [theme, setTheme] = useState<String>('light');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | undefined>();
   const [hexColor, setHexColor] = useState<string>();
   const [selected, setSelected] = useState<Color>();
 
@@ -29,8 +29,6 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
     setSaving(true)
     try {
       const customData = { theme, color: color ? `${color.red},${color.green},${color.blue}` : undefined };
-      console.log(customData, uploadId);
-
       await client.uploads.update(uploadId, {
         defaultFieldMetadata: {
           en: {
@@ -46,26 +44,6 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
     setSaving(false)
 
   }, [uploadId, ctx.currentUserAccessToken])
-
-
-
-  const saveTheme = async (theme: String) => {
-    const client = new SiteClient(ctx.currentUserAccessToken)
-    console.log('save theme')
-    try {
-      await client.uploads.update(uploadId, {
-        defaultFieldMetadata: {
-          en: {
-            alt: undefined,
-            title: undefined,
-            customData: { theme }
-          },
-        },
-      })
-    } catch (err: any) {
-      setError(err.message)
-    }
-  }
 
   const loadData = async () => {
     setLoading(true)
@@ -125,18 +103,13 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
   useEffect(() => { uploadId ? loadData() : setColors(undefined) }, [uploadId])
   useEffect(() => { if (selected) setHexColor(`#${rgbHex(selected.red, selected.green, selected.blue)}`) }, [selected])
   useEffect(() => {
-    //if (!hexColor) return
     try {
       const color = hexColor ? hexRgb(hexColor) : undefined;
-      console.log(color, theme);
-
       saveCustomData(color, theme);
     } catch (err) {
-      console.log('not a valid color', hexColor)
+      console.log('not a valid customData', hexColor, theme)
     }
   }, [hexColor, theme, saveCustomData])
-
-  console.log('new ver', error);
 
   return (
     <Canvas ctx={ctx}>
