@@ -150,7 +150,12 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
                   name="theme"
                   label="White menu"
                   value={theme !== 'light'}
-                  onChange={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+                  onChange={() => {
+                    console.log('set theme')
+                    setTheme(theme === 'light' ? 'dark' : 'light')
+                  }}
+
+
                 />
               </div>
               <div className={styles.custom}>
