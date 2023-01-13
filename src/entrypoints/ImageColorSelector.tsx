@@ -5,17 +5,17 @@ import { Canvas, Spinner, SwitchField } from 'datocms-react-ui';
 import hexRgb from 'hex-rgb';
 import rgbHex from 'rgb-hex';
 
-const { SiteClient } =  require('datocms-client')
+const { SiteClient } = require('datocms-client')
 
 type PropTypes = { ctx: RenderFieldExtensionCtx };
-type Color = { red:number, green:number, blue:number, alpha:number }
+type Color = { red: number, green: number, blue: number, alpha: number }
 
-export default function ImageColorSelector({ ctx } : PropTypes) {
-  
+export default function ImageColorSelector({ ctx }: PropTypes) {
+
   const fieldKey = ctx.field.attributes.api_key;
   const formValues = ctx.formValues as any;
   const uploadId = formValues[fieldKey]?.upload_id
-  
+
   const [colors, setColors] = useState<[Color]>();
   const [theme, setTheme] = useState<String>('light');
   const [loading, setLoading] = useState(false);
@@ -24,79 +24,81 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
   const [hexColor, setHexColor] = useState<string>();
   const [selected, setSelected] = useState<Color>();
 
-  const saveCustomData = async (color:Color, theme:String) => {
+  const saveCustomData = async (color: Color, theme: String) => {
     const client = new SiteClient(ctx.currentUserAccessToken)
     setSaving(true)
-    try{  
-      const customData = { color: `${color.red},${color.green},${color.blue}`, theme};
+    try {
+      const customData = { color: `${color.red},${color.green},${color.blue}`, theme };
+      console.log(customData);
+
       await client.uploads.update(uploadId, {
         defaultFieldMetadata: {
           en: {
-            alt:undefined,
-            title:undefined,
+            alt: undefined,
+            title: undefined,
             customData
           },
         },
       })
-    }catch(err : any){
+    } catch (err: any) {
       setError(err.message)
     }
     setSaving(false)
   }
 
-  
-  const saveTheme = async (theme:String) => {
+
+  const saveTheme = async (theme: String) => {
     const client = new SiteClient(ctx.currentUserAccessToken)
     console.log('save theme')
-    try{  
+    try {
       await client.uploads.update(uploadId, {
         defaultFieldMetadata: {
           en: {
-            alt:undefined,
-            title:undefined,
-            customData:{ theme }
+            alt: undefined,
+            title: undefined,
+            customData: { theme }
           },
         },
       })
-    }catch(err : any){
+    } catch (err: any) {
       setError(err.message)
     }
   }
 
   const loadData = async () => {
     setLoading(true)
-    try{
+    try {
       setHexColor(undefined)
       const client = new SiteClient(ctx.currentUserAccessToken)
       const image = await client.uploads.find(uploadId)
       const selectedColor = image?.defaultFieldMetadata.en?.customData.color;
       const selectedTheme = image?.defaultFieldMetadata.en?.customData.theme;
-    
-      if(selectedColor){
-        const rgb = selectedColor.split(',').map((c:string) => parseInt(c))
-        setSelected({red:rgb[0],green:rgb[1],blue:rgb[2],alpha:255})
+
+      if (selectedColor) {
+        const rgb = selectedColor.split(',').map((c: string) => parseInt(c))
+        setSelected({ red: rgb[0], green: rgb[1], blue: rgb[2], alpha: 255 })
       }
-      if(selectedTheme)
+      if (selectedTheme)
         setTheme(selectedTheme)
-      
+
       setColors(image?.colors)
-    }catch(err : any){
+    } catch (err: any) {
       setError(err.message)
     }
     setLoading(false)
   }
 
-  const isSelected = (color:Color, color2?:Color) =>{  
-    if(!color || !color2) return false
+  const isSelected = (color: Color, color2?: Color) => {
+    if (!color || !color2) return false
     return color.red === color2.red && color.green === color2.green && color.blue === color2.blue
   }
 
-  const isCustomColor = (color:Color | undefined) : boolean => {
-    if(typeof colors === 'undefined' || typeof color === 'undefined') 
+  const isCustomColor = (color: Color | undefined): boolean => {
+    if (typeof colors === 'undefined' || typeof color === 'undefined')
       return false
-    
+
     for (let i = 0; i < colors.length; i++) {
-      if(JSON.stringify(colors[i]) === JSON.stringify(color))
+      if (JSON.stringify(colors[i]) === JSON.stringify(color))
         return false;
     }
     return true
@@ -108,77 +110,79 @@ export default function ImageColorSelector({ ctx } : PropTypes) {
       id: 'colorPickerModal',
       width: 's',
       closeDisabled: false,
-      title:'Custom color',
-      parameters: { hex:hexColor },
+      title: 'Custom color',
+      parameters: { hex: hexColor },
     });
 
-    if(!result) return
+    if (!result) return
 
     setSelected(hexRgb(result as string))
     setHexColor(result as string)
   };
 
-  useEffect(()=>{ uploadId ? loadData() : setColors(undefined)}, [uploadId])
-  useEffect(()=>{ if(selected) setHexColor(`#${rgbHex(selected.red, selected.green, selected.blue)}`)}, [selected])
-  useEffect(()=>{ 
-    if(!hexColor) return
-    try{
+  useEffect(() => { uploadId ? loadData() : setColors(undefined) }, [uploadId])
+  useEffect(() => { if (selected) setHexColor(`#${rgbHex(selected.red, selected.green, selected.blue)}`) }, [selected])
+  useEffect(() => {
+    if (!hexColor) return
+    try {
       const color = hexRgb(hexColor);
+      console.log(color, theme);
+
       saveCustomData(color, theme);
-    }catch(err){
+    } catch (err) {
       console.log('not a valid color', hexColor)
     }
-  }, [hexColor, theme])
-  
+  }, [hexColor, theme, saveCustomData])
+
   return (
     <Canvas ctx={ctx}>
       <main>
-        {loading && <Spinner size={20}/>}
+        {loading && <Spinner size={20} />}
         {colors &&
           <>
             <div className={styles.container}>
               <div className={styles.theme}>
-                <SwitchField 
+                <SwitchField
                   id="theme"
                   name="theme"
                   label="White menu"
                   value={theme !== 'light'}
-                  onChange={()=> setTheme(theme === 'light' ? 'dark' : 'light')}
+                  onChange={() => setTheme(theme === 'light' ? 'dark' : 'light')}
                 />
               </div>
               <div className={styles.custom}>
                 <div className={styles.palette}>
-                  {colors.map((color, idx) => 
-                    <div 
+                  {colors.map((color, idx) =>
+                    <div
                       key={idx}
-                      className={`${styles.color}`} 
-                      onClick={()=>setSelected(color)}
+                      className={`${styles.color}`}
+                      onClick={() => setSelected(color)}
                     >
-                      <div 
-                        className={`${styles.colorBox} ${isSelected(color, selected) && styles.selected}`} 
-                        style={{backgroundColor:`rgba(${color.red},${color.green},${color.blue},${color.alpha})`}}
+                      <div
+                        className={`${styles.colorBox} ${isSelected(color, selected) && styles.selected}`}
+                        style={{ backgroundColor: `rgba(${color.red},${color.green},${color.blue},${color.alpha})` }}
                       ></div>
                     </div>
                   )}
                 </div>
-                <input 
-                  id={'hexcolor'} 
-                  type="text" 
-                  className={styles.hex} 
+                <input
+                  id={'hexcolor'}
+                  type="text"
+                  className={styles.hex}
                   value={hexColor}
                   maxLength={7}
                   placeholder="#ccaabb"
-                  onKeyDown={()=>setSelected(undefined)}
-                  onChange={(e)=> setHexColor(e.target.value)}
+                  onKeyDown={() => setSelected(undefined)}
+                  onChange={(e) => setHexColor(e.target.value)}
                 />
                 <div className={styles.color}>
-                  <div 
-                    className={`${styles.colorBox} ${(hexColor && isCustomColor(selected)) ? styles.selected : ''}`} 
-                    style={saving ? {} : {backgroundColor:hexColor}}
+                  <div
+                    className={`${styles.colorBox} ${(hexColor && isCustomColor(selected)) ? styles.selected : ''}`}
+                    style={saving ? {} : { backgroundColor: hexColor }}
                     onClick={handleColorPickerModal}
                     title="Select color"
                   >
-                    {saving && <Spinner size={20}/>}
+                    {saving && <Spinner size={20} />}
                   </div>
                 </div>
               </div>
