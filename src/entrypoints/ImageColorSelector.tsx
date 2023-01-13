@@ -24,12 +24,11 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
   const [hexColor, setHexColor] = useState<string>();
   const [selected, setSelected] = useState<Color>();
 
-  const saveCustomData = useCallback(async (color: Color, theme: String) => {
+  const saveCustomData = useCallback(async (color: Color | undefined, theme: String) => {
     const client = new SiteClient(ctx.currentUserAccessToken)
     setSaving(true)
     try {
-      const customData = { color: `${color.red},${color.green},${color.blue}`, theme };
-      console.log(customData);
+      const customData = { theme, color: color ? `${color.red},${color.green},${color.blue}` : undefined };
 
       await client.uploads.update(uploadId, {
         defaultFieldMetadata: {
@@ -124,9 +123,9 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
   useEffect(() => { uploadId ? loadData() : setColors(undefined) }, [uploadId])
   useEffect(() => { if (selected) setHexColor(`#${rgbHex(selected.red, selected.green, selected.blue)}`) }, [selected])
   useEffect(() => {
-    if (!hexColor) return
+    //if (!hexColor) return
     try {
-      const color = hexRgb(hexColor);
+      const color = hexColor ? hexRgb(hexColor) : undefined;
       console.log(color, theme);
 
       saveCustomData(color, theme);
