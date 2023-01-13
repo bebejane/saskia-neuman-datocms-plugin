@@ -1,5 +1,5 @@
 import styles from './ImageColorSelector.module.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { RenderFieldExtensionCtx } from 'datocms-plugin-sdk';
 import { Canvas, Spinner, SwitchField } from 'datocms-react-ui';
 import hexRgb from 'hex-rgb';
@@ -24,7 +24,7 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
   const [hexColor, setHexColor] = useState<string>();
   const [selected, setSelected] = useState<Color>();
 
-  const saveCustomData = async (color: Color, theme: String) => {
+  const saveCustomData = useCallback(async (color: Color, theme: String) => {
     const client = new SiteClient(ctx.currentUserAccessToken)
     setSaving(true)
     try {
@@ -44,7 +44,8 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
       setError(err.message)
     }
     setSaving(false)
-  }
+  }, [uploadId, ctx.currentUserAccessToken])
+
 
 
   const saveTheme = async (theme: String) => {
@@ -133,6 +134,8 @@ export default function ImageColorSelector({ ctx }: PropTypes) {
       console.log('not a valid color', hexColor)
     }
   }, [hexColor, theme, saveCustomData])
+
+  console.log('new ver');
 
   return (
     <Canvas ctx={ctx}>
